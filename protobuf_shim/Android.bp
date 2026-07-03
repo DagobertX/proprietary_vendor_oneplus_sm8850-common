@@ -1,0 +1,51 @@
+// system_ext libprotobuf-cpp-lite-21.12 shim.
+//
+// The system_ext prebuilt binary "horae" (proprietary/system_ext/bin/horae)
+// has DT_NEEDED libprotobuf-cpp-lite-21.12.so, but crDroid 16.0 / bp4a
+// defines no module of that name: prebuilts/misc protobuf_vendorcompat only
+// provides the vendor-image "libprotobuf-cpp-lite-21.12-vendorcompat"
+// (which the other 37 protobuf refs in this repo resolve to) and a
+// system_ext module cannot link a vendor-variant library.
+//
+// LineageOS 23.2 fixes this in prebuilts/misc by exposing a
+// system_ext_specific "libprotobuf-cpp-lite-21.12" ("Expose system_ext
+// libprotobuf-cpp-lite-21.12", e0793734). prebuilts/misc is outside this
+// port's repo set, so the same BSD-licensed prebuilt payload
+// (byte-identical to prebuilts/misc/protobuf_vendorcompat/arm64/
+// libprotobuf-cpp-lite-21.12.so, sha256 6a66ab44b6b3f372b05ab3c59e423f2d
+// 6eba3265f76c52c14ecb148c2e282077) is shipped vendor-side here instead.
+// No framework or external/ edits.
+
+package {
+    default_applicable_licenses: [
+        "vendor_oneplus_sm8850-common_protobuf_shim_license",
+    ],
+}
+
+license {
+    name: "vendor_oneplus_sm8850-common_protobuf_shim_license",
+    license_kinds: ["SPDX-license-identifier-BSD"],
+    license_text: ["LICENSE"],
+}
+
+cc_prebuilt_library_shared {
+    name: "libprotobuf-cpp-lite-21.12",
+    system_ext_specific: true,
+    target: {
+        android_arm: {
+            srcs: ["arm/libprotobuf-cpp-lite-21.12.so"],
+        },
+        android_arm64: {
+            srcs: ["arm64/libprotobuf-cpp-lite-21.12.so"],
+        },
+    },
+
+    shared_libs: [
+        "libc++",
+        "libc",
+        "libdl",
+        "liblog",
+        "libm",
+        "libz",
+    ],
+}
